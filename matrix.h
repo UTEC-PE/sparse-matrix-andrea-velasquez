@@ -109,7 +109,30 @@ class Matrix {
             return temp->data;
         };
         Matrix<T> operator*(Matrix<T> other);
-        Matrix<T> operator*(T scalar);
+        Matrix<T> operator*(T scalar){   
+            /*         
+            Node<T>* cur_this = this->origin;
+            Node<T>* temp_this;
+            Node<T>* temp_zero_this;
+
+            while (cur_this){
+                temp_this = cur_this;
+                while(cur_this){
+                    cout << "\nCell: " << cur_this->column << " " << cur_this->row;
+                    this->set(cur_this->column, cur_this->row, cur_this->data*scalar);
+                    cur_this = cur_this->next;
+                }
+                cout <<endl;
+                cur_this = temp_this->down;
+            }
+            */
+            
+
+            for (int i=0; i<columns; ++i)
+                for (int j=0; j<rows; j++)
+                    this->set(i,j, (*this)(i,j)*scalar);
+            return *this;
+        };
         Matrix<T> operator+(Matrix<T> other){
             if (other.columns!=columns || other.rows!=rows) throw "Can't operate with matrices with different dimensions";
 
@@ -157,7 +180,6 @@ class Matrix {
                 temp_other = cur_other;
 
                 while(cur_other){
-                    cout << "\nCell: " << cur_this->column << " " << cur_this->row;
                     // other has a cell behind *this (0-data=-data)
                     if (cur_this->column > cur_other->column){
                         this->set(cur_other->column, cur_other->row, -cur_other->data);
@@ -215,7 +237,15 @@ class Matrix {
             return *this;
         };
 
-        //~Matrix();
+        // ~Matrix(){
+        //     Node<T>* cur_other = origin;
+        //     Node<T>* temp_this = cur_other;
+        //     while(cur_other){
+        //         temp_this = cur_other->next;
+        //         cur_other->killSelf();
+        //         cur_other = temp_this;
+        //     }
+        // };
 };
 
 #endif
