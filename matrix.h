@@ -110,10 +110,110 @@ class Matrix {
         };
         Matrix<T> operator*(Matrix<T> other);
         Matrix<T> operator*(T scalar);
-        Matrix<T> operator+(Matrix<T> other);
-        Matrix<T> operator-(Matrix<T> other);
+        Matrix<T> operator+(Matrix<T> other){
+            if (other.columns!=columns || other.rows!=rows) throw "Can't operate with matrices with different dimensions";
+
+            Node<T>* cur_this = this->origin;
+            Node<T>* cur_other = other.origin;
+
+            Node<T>* temp_this;
+            Node<T>* temp_other;
+
+            while (cur_this){
+                temp_this = cur_this;
+                temp_other = cur_other;
+
+                while(cur_other){
+                    // other has a cell behind *this (0-data=-data)
+                    if (cur_this->column > cur_other->column){
+                        this->set(cur_other->column, cur_other->row, cur_other->data);
+                        cur_other = cur_other->next;
+                    }
+                    // other has a cell in front of *this
+                    else if (cur_this->column < cur_other->column) cur_this = cur_this->next;
+                    // if they have the same cell (data1-data2)
+                    else{
+                        cur_this->data = cur_this->data+cur_other->data;
+                        cur_this = cur_this->next;
+                        cur_other = cur_other->next;
+                    }
+                }
+                cur_this = temp_this->down;
+                cur_other = temp_other->down;
+            }
+            return *this;
+        };
+        Matrix<T> operator-(Matrix<T> other){
+            if (other.columns!=columns || other.rows!=rows) throw "Can't operate with matrices with different dimensions";
+
+            Node<T>* cur_this = this->origin;
+            Node<T>* cur_other = other.origin;
+
+            Node<T>* temp_this;
+            Node<T>* temp_other;
+
+            while (cur_this){
+                temp_this = cur_this;
+                temp_other = cur_other;
+
+                while(cur_other){
+                    cout << "\nCell: " << cur_this->column << " " << cur_this->row;
+                    // other has a cell behind *this (0-data=-data)
+                    if (cur_this->column > cur_other->column){
+                        this->set(cur_other->column, cur_other->row, -cur_other->data);
+                        cur_other = cur_other->next;
+                    }
+                    // other has a cell in front of *this
+                    else if (cur_this->column < cur_other->column) cur_this = cur_this->next;
+                    // if they have the same cell (data1-data2)
+                    else{
+                        cur_this->data = cur_this->data-cur_other->data;
+                        cur_this = cur_this->next;
+                        cur_other = cur_other->next;
+                    }
+                }
+                cur_this = temp_this->down;
+                cur_other = temp_other->down;
+            }
+            return *this;
+        };
         Matrix<T> transposed();
-        Matrix<T> operator=(Matrix<T> other);
+        Matrix<T> operator=(Matrix<T> other){
+            if (other.columns!=columns || other.rows!=rows) throw "Can't operate with matrices with different dimensions";
+
+            Node<T>* cur_this = this->origin;
+            Node<T>* cur_other = other.origin;
+
+            Node<T>* temp_this;
+            Node<T>* temp_other;
+
+            while (cur_this){
+                temp_this = cur_this;
+                temp_other = cur_other;
+
+                while(cur_other){
+                    // other has a cell behind *this (0-data=-data)
+                    if (cur_this->column > cur_other->column) {
+                        this->set(cur_other->column, cur_other->row, cur_other->data);
+                        cur_other = cur_other->next;
+                    }
+                    // other has a cell in front of *this
+                    else if (cur_this->column < cur_other->column){
+                        this->set(cur_other->column, cur_other->row, 0);
+                        cur_this = cur_this->next;
+                    }
+                    // if they have the same cell (data1-data2)
+                    else{
+                        cur_this->data = cur_other->data;
+                        cur_this = cur_this->next;
+                        cur_other = cur_other->next;
+                    }
+                }
+                cur_this = temp_this->down;
+                cur_other = temp_other->down;
+            }
+            return *this;
+        };
 
         //~Matrix();
 };
